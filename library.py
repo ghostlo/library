@@ -11,6 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import requests
 
+# help you choose seats
 def gii(argv):
 	arg=str(argv)
 	WebDriverWait(driver, 1, poll_frequency=0.01).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div/ul/li['+arg+']')))
@@ -34,12 +35,12 @@ def choose():
 
 req=requests.get('http://seat.lib.bit.edu.cn/api.php/space_days/17')
 
+# get the date of next day
 try:
 	req1=req.json()
 	req2=req1.get("data").get("list")
 	last = str(req2[1].get('day'))
 except ValueError:
-	print 'oh day'
 	time.sleep(1)
 	req = requests.get('http://seat.lib.bit.edu.cn/api.php/space_days/17')
 	try:
@@ -47,8 +48,9 @@ except ValueError:
 		req2 = req1.get("data").get("list")
 		last = str(req2[1].get('day'))
 	except ValueError:
-		print 'noday'
+		print 'no day. Please try again'
 
+# get the segment in the url
 def segment(url):
 	req=requests.get(url)
 	try:
@@ -56,7 +58,6 @@ def segment(url):
 		req2=req1.get("data").get('list')
 		return req2[0].get('bookTimeId')
 	except ValueError:
-		print 'oh segment'
 		time.sleep(1)
 		req = requests.get(url)
 		try:
@@ -64,14 +65,14 @@ def segment(url):
 			req2 = req1.get("data").get('list')
 			return req2[0].get('bookTimeId')
 		except ValueError:
-			print 'nosegment'
+			print 'no segment. Please try again'
 			driver.close()
 			driver.quit()
 
-# 使用chromedriver 初始位置在downloads里
+# chromedriver 
 driver = webdriver.Chrome('/your webdriver path') 
 
-# 登录
+# register
 driver.get('http://seat.lib.bit.edu.cn/Home/web/index/area/1')
 time.sleep(30)
 
@@ -93,7 +94,7 @@ driver.find_element_by_xpath('//*[@id="casLoginForm"]/ul/li[4]/input').click()
 segment1=str(segment('http://seat.lib.bit.edu.cn/api.php/space_time_buckets?day='+last+'&area=17'))
 segment2=str(segment('http://seat.lib.bit.edu.cn/api.php/space_time_buckets?day='+last+'&area=16'))
 
-# 页面
+# the time
 while True:
 	now=int(time.strftime('%H',time.localtime(time.time())))
 	if now==6:
@@ -101,7 +102,7 @@ while True:
 	else:
 		continue
 
-# 页面
+# page
 time.sleep(0.1)
 driver.get('http://seat.lib.bit.edu.cn/Home/Web/area?area=17&segment='+segment1+'&day='+last+'&startTime=08:00&endTime=22:40')
 time.sleep(0.05)
@@ -109,6 +110,6 @@ choose()
 driver.get('http://seat.lib.bit.edu.cn/Home/Web/area?area=16&segment='+segment2+'&day='+last+'&startTime=08:00&endTime=22:40')
 time.sleep(0.05)
 choose()
-print "I can't help you"
+print "Seats are not available"
 driver.close()
 driver.quit()
