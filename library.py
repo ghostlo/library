@@ -36,22 +36,6 @@ def choose():
 
 req=requests.get('http://seat.lib.bit.edu.cn/api.php/space_days/17')
 
-# get the date of next day
-i=1
-a=False
-while i<11:
-	try:
-		req = requests.get('http://seat.lib.bit.edu.cn/api.php/space_days/17')
-		req1=req.json()
-		req2=req1.get("data").get("list")
-		last = str(req2[1].get('day'))
-		a=True
-		break
-	except Exception:
-		print "I can't find day "+ str(i)
-		time.sleep(0.5)
-		i=i+1
-
 if a==False:
 	print 'your network is broken'
 	exit()
@@ -92,9 +76,6 @@ driver.find_element_by_name("password").send_keys(password)
 
 driver.find_element_by_xpath('//*[@id="casLoginForm"]/ul/li[4]/input').click()
 
-segment1=str(segment('http://seat.lib.bit.edu.cn/api.php/space_time_buckets?day='+last+'&area=17'))
-segment2=str(segment('http://seat.lib.bit.edu.cn/api.php/space_time_buckets?day='+last+'&area=16'))
-
 # the time
 while True:
 	now=int(time.strftime('%S',time.localtime(time.time())))
@@ -110,6 +91,25 @@ while True:
 		break
 	else:
 		continue
+
+# get the date of next day
+i=1
+a=False
+while i<11:
+	try:
+		req = requests.get('http://seat.lib.bit.edu.cn/api.php/space_days/17')
+		req1=req.json()
+		req2=req1.get("data").get("list")
+		last = str(req2[1].get('day'))
+		a=True
+		break
+	except Exception:
+		print "I can't find day "+ str(i)
+		time.sleep(0.5)
+		i=i+1
+
+segment1=str(segment('http://seat.lib.bit.edu.cn/api.php/space_time_buckets?day='+last+'&area=17'))
+segment2=str(segment('http://seat.lib.bit.edu.cn/api.php/space_time_buckets?day='+last+'&area=16'))
 
 # page
 time.sleep(0.1)
