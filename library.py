@@ -1,7 +1,8 @@
 #
 # -*- coding: utf-8 -*-
 #
-# help doc http://docs.seleniumhq.org/docs/#
+# by ghostlo 
+#
 # 运用selenium方法模拟浏览器
 
 import time
@@ -36,38 +37,38 @@ def choose():
 req=requests.get('http://seat.lib.bit.edu.cn/api.php/space_days/17')
 
 # get the date of next day
-try:
-	req1=req.json()
-	req2=req1.get("data").get("list")
-	last = str(req2[1].get('day'))
-except ValueError:
-	time.sleep(1)
-	req = requests.get('http://seat.lib.bit.edu.cn/api.php/space_days/17')
+i=1
+a=False
+while i<11:
 	try:
-		req1 = req.json()
-		req2 = req1.get("data").get("list")
+		req = requests.get('http://seat.lib.bit.edu.cn/api.php/space_days/17')
+		req1=req.json()
+		req2=req1.get("data").get("list")
 		last = str(req2[1].get('day'))
-	except ValueError:
-		print 'no day. Please try again'
+		a=True
+		break
+	except Exception:
+		print "I can't find day "+ str(i)
+		time.sleep(0.5)
+		i=i+1
+
+if a==False:
+	print 'your network is broken'
+	exit()
 
 # get the segment in the url
 def segment(url):
-	req=requests.get(url)
-	try:
-		req1=req.json()
-		req2=req1.get("data").get('list')
-		return req2[0].get('bookTimeId')
-	except ValueError:
-		time.sleep(1)
-		req = requests.get(url)
+	i=1
+	while i<11:
 		try:
-			req1 = req.json()
-			req2 = req1.get("data").get('list')
+			req = requests.get(url)
+			req1=req.json()
+			req2=req1.get("data").get('list')
 			return req2[0].get('bookTimeId')
 		except ValueError:
-			print 'no segment. Please try again'
-			driver.close()
-			driver.quit()
+			print "I can't find segment "+str(i)
+			time.sleep(0.5)
+			i=i+1
 
 # chromedriver 
 driver = webdriver.Chrome('/your webdriver path') 
@@ -95,6 +96,14 @@ segment1=str(segment('http://seat.lib.bit.edu.cn/api.php/space_time_buckets?day=
 segment2=str(segment('http://seat.lib.bit.edu.cn/api.php/space_time_buckets?day='+last+'&area=16'))
 
 # the time
+while True:
+	now=int(time.strftime('%S',time.localtime(time.time())))
+	if now==58 or now==59:
+		break
+	else:
+		time.sleep(1)
+		continue
+
 while True:
 	now=int(time.strftime('%H',time.localtime(time.time())))
 	if now==6:
