@@ -34,12 +34,6 @@ def choose():
 	for i in range[1:18]
 		gii(i)
 
-req=requests.get('http://seat.lib.bit.edu.cn/api.php/space_days/17')
-
-if a==False:
-	print 'your network is broken'
-	exit()
-
 # get the segment in the url
 def segment(url):
 	i=1
@@ -107,6 +101,11 @@ while i<11:
 		print "I can't find day "+ str(i)
 		time.sleep(0.5)
 		i=i+1
+
+
+if a==False:
+	print 'your network is broken'
+	exit()
 
 segment1=str(segment('http://seat.lib.bit.edu.cn/api.php/space_time_buckets?day='+last+'&area=17'))
 segment2=str(segment('http://seat.lib.bit.edu.cn/api.php/space_time_buckets?day='+last+'&area=16'))
